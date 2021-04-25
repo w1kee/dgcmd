@@ -1,24 +1,30 @@
 package dgcmd
 
 import (
+	"strings"
+
 	"github.com/bwmarrin/discordgo"
 )
 
 type (
+	Args []string
+
 	Command struct {
 		Names     []string
 		Usage     string
 		Validator func([]string) error
-		Callback  func(s *discordgo.Session, m *discordgo.MessageCreate, args []string)
+		Callback  func(s *discordgo.Session, m *discordgo.MessageCreate, args Args)
 	}
 
 	Handler struct {
 		cmdMap map[string]*Command
 		prefix string
 	}
-
-	HandleFunc = func(s *discordgo.Session, m *discordgo.MessageCreate)
 )
+
+func (a Args) Joined() string {
+	return strings.Join([]string(a), " ")
+}
 
 func NewHandler(s *discordgo.Session) *Handler {
 	h := &Handler{
