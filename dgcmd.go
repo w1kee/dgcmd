@@ -1,4 +1,4 @@
-package cmd
+package dgcmd
 
 import (
 	"github.com/bwmarrin/discordgo"
@@ -20,15 +20,12 @@ type (
 	HandleFunc = func(s *discordgo.Session, m *discordgo.MessageCreate)
 )
 
-func NewHandler() *Handler {
-	// TODO: figure out a better way to do it
-	return &Handler{
+func NewHandler(s *discordgo.Session) *Handler {
+	h := &Handler{
 		cmdMap: make(map[string]*Command),
 		prefix: "!",
 	}
-}
 
-func (h *Handler) Start(s *discordgo.Session) {
 	s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		naa := parseCommand(m.Content, h.prefix)
 		if naa == nil {
@@ -60,9 +57,11 @@ func (h *Handler) Start(s *discordgo.Session) {
 
 		cmd.Callback(s, m, naa[1:])
 	})
+
+	return h
 }
 
-func (h *Handler) AddCommand(c *Command) error {
+func (h *Handler) Add(c *Command) error {
 	for _, name := range c.Names {
 		h.cmdMap[name] = c
 	}
