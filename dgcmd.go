@@ -26,10 +26,13 @@ func (a Args) Joined() string {
 	return strings.Join([]string(a), " ")
 }
 
-func NewHandler(s *discordgo.Session) *Handler {
+func NewHandler(s *discordgo.Session, p string) *Handler {
+	if p == "" {
+		p = "!"
+	}
 	h := &Handler{
 		cmdMap: make(map[string]*Command),
-		prefix: "!",
+		prefix: p,
 	}
 
 	s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
